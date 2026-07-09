@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region = var.region
 }
 
 resource "aws_security_group" "web_sg" {
@@ -7,7 +7,7 @@ resource "aws_security_group" "web_sg" {
   description = "Allow SSH and HTTP"
 
   ingress {
-    description = "Allow SSH"
+    description = "SSH"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -15,7 +15,7 @@ resource "aws_security_group" "web_sg" {
   }
 
   ingress {
-    description = "Allow HTTP"
+    description = "HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -23,17 +23,21 @@ resource "aws_security_group" "web_sg" {
   }
 
   egress {
-    description = "Allow all outgoing traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = {
+    Name = "DevOps-Final-SG"
+  }
 }
 
 resource "aws_instance" "web_server" {
-  ami                    = "ami-091138d0f0d41ff90"
-  instance_type          = "t3.micro"
+  ami                    = var.ami
+  instance_type          = var.instance_type
+  key_name               = "DevOpsFinalKey"
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
   tags = {

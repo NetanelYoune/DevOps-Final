@@ -1,0 +1,29 @@
+---
+- name: Install Apache Web Server
+  hosts: web
+  become: yes
+
+  tasks:
+
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+
+    - name: Install Apache2
+      apt:
+        name: apache2
+        state: present
+
+    - name: Start Apache service
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Copy website
+      copy:
+        src: ../website/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
